@@ -1,0 +1,57 @@
+<% include layout %>
+
+<h1><%= title %></h1>
+    <p>Welcome to our test app</p>
+
+    <div id="wrapper">
+
+        <div id="userInfo">
+            <h2>User Info</h2>
+            <p>
+                <strong>Name:</strong>
+                |  <span id='userInfoName'></span>
+                <br>    
+                <strong>Age:</strong>
+                |  <span id='userInfoAge'></span>
+                <br>    
+                <strong>Gender:</strong>
+                |  <span id='userInfoGender'></span>
+                <br>    
+                <strong>Location:</strong>
+                |  <span id='userInfoLocation'></span>
+            </p>      
+        </div>
+
+        <h2>User List</h2>
+        <div id="userList">
+            <table>
+                <thead>
+                    <th>ID</th>
+                    <th>UserName</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h2>User Form</h2>
+        <div id="addUser">
+            <fieldset>
+                <input type='text' placeholder='Username' id="inputUserName">
+                <input type='text' placeholder='Email' id="inputUserEmail">
+                <br>
+                <input type='text' placeholder='Full Name' id="inputUserFullname">
+                <input type='text' placeholder='Age' id="inputUserAge">
+                <br>
+                <input type='text' placeholder='Location' id="inputUserLocation">
+                <input type='text' placeholder='gender' id="inputUserGender">
+                <br>
+                <!--<input type='hidden' value='' id="inputUserId" disabled="disabled">-->
+                <button id="btnAddUser">Add User</button>
+                <button id="btnEditUser" class="hide">Edit User</button>
+                <button id="btnReset">Reset</button>
+            </fieldset>
+        </div>
+
+    </div>
