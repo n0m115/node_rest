@@ -1,5 +1,5 @@
 // Userlist data array for filling in info box
-var userListData = [];
+let userListData = [];
 
 // DOM Ready =============================================================
 $(document).ready(function() {
@@ -37,10 +37,10 @@ $(document).ready(function() {
 function populateTable() {
 
     // Empty content string
-    var tableContent = '';
+    let tableContent = '';
 
     // jQuery AJAX call for JSON
-    $.getJSON( '/users/userlist', function( data ) {
+    $.getJSON( '/api/users', function( data ) {
 
         // For each item in our JSON, add a table row and cells to the content string
         $.each(data, function(){
@@ -62,17 +62,9 @@ function populateTable() {
 
 // Show User Info
 function getUserInfo(id) {
-
-    /*// Get Index of object based on id value
-    var arrayPosition = userListData.map(function(arrayItem) {
-            return arrayItem._id; 
-        }).indexOf(UserName);
-
-    // Get our User Object
-    return userListData[arrayPosition];*/
     
     let json;
-    $.get('/users/user/' + id, function(res) {
+    $.get('/api/user/' + id, function(res) {
         json = res;
     });
     
@@ -85,14 +77,9 @@ function showUserInfo(event) {
     // Prevent Link from Firing
     event.preventDefault();
 
-    // Retrieve username from link rel attribute
-    // var thisUserName = $(this).attr('rel');
-    var thisUserId = $(this).attr('rel');
+    let thisUserId = $(this).attr('rel');
 
-    // Get our User Object
-    // var thisUserObject = getUserInfo(thisUserName);
-    // var thisUserObject = getUserInfo(thisUserId);
-    $.getJSON('/users/user/' + thisUserId, function(thisUserObject) {
+    $.getJSON('/api/user/' + thisUserId, function(thisUserObject) {
         //Populate Info Box
         $('#userInfoName').text(thisUserObject.fullname);
         $('#userInfoAge').text(thisUserObject.age);
@@ -103,7 +90,7 @@ function showUserInfo(event) {
 
 function validateForm() {
     // Super basic validation - increase errorCount variable if any fields are blank
-    var errorCount = 0;
+    let errorCount = 0;
     $('#addUser input').each(function(index, val) {
         if($(this).val() === '') {
             console.log(index); errorCount++;
@@ -118,13 +105,13 @@ function addUser(event) {
     event.preventDefault();
 
     // $("#inputUserId").attr("disabled", "disabled");
-    var errorCount = validateForm();
+    let errorCount = validateForm();
 
     // Check and make sure errorCount's still at zero
     if(errorCount === 0) {
 
         // If it is, compile all user info into one object
-        var newUser = {
+        let newUser = {
             'username': $('#addUser fieldset input#inputUserName').val(),
             'email': $('#addUser fieldset input#inputUserEmail').val(),
             'fullname': $('#addUser fieldset input#inputUserFullname').val(),
@@ -137,7 +124,7 @@ function addUser(event) {
         $.ajax({
             type: 'POST',
             data: newUser,
-            url: '/users/adduser',
+            url: '/api/user',
             dataType: 'JSON'
         }).done(function( response ) {
 
@@ -172,15 +159,9 @@ function loadedituser(event) {
     // Prevent Link from Firing
     event.preventDefault();
 
-    // Retrieve username from link rel attribute
-    // var thisUserName = $(this).attr('rel');
-    var thisUserId = $(this).attr('rel');
+    let thisUserId = $(this).attr('rel');
 
-    // Get our User Object
-    // var thisUserObject = getUserInfo(thisUserName);
-    // var thisUserObject = getUserInfo(thisUserId);
-
-    $.get('/users/user/' + thisUserId, function(thisUserObject) {
+    $.get('/api/user/' + thisUserId, function(thisUserObject) {
         //Populate form
         $('#inputUserName').val(thisUserObject.username);
         $('#inputUserEmail').val(thisUserObject.email);
@@ -188,7 +169,6 @@ function loadedituser(event) {
         $('#inputUserAge').val(thisUserObject.age);
         $('#inputUserLocation').val(thisUserObject.location);
         $('#inputUserGender').val(thisUserObject.gender);
-        // $('#inputUserId').removeAttr("disabled").val(thisUserObject._id);
         $('#btnEditUser').attr("data-id", thisUserObject._id);
     });
 
@@ -201,16 +181,15 @@ function loadedituser(event) {
 function editUser(event) {
     event.preventDefault();
 
-    var errorCount = validateForm();
-    // var id = $("#inputUserId").val();
-    var id = $("#btnEditUser").attr("data-id");
+    let errorCount = validateForm();
+    let id = $("#btnEditUser").attr("data-id");
 
     // Check and make sure errorCount's still at zero
     if(errorCount === 0 && id != '') {
 
 
         // If it is, compile all user info into one object
-        var updateUser = {
+        let updateUser = {
             'username': $('#addUser fieldset input#inputUserName').val(),
             'email': $('#addUser fieldset input#inputUserEmail').val(),
             'fullname': $('#addUser fieldset input#inputUserFullname').val(),
@@ -223,7 +202,7 @@ function editUser(event) {
         $.ajax({
             type: 'PUT',
             data: updateUser,
-            url: '/users/edituser/' + id,
+            url: '/api/user/' + id,
             dataType: 'JSON'
         }).done(function( response ) {
 
@@ -258,7 +237,7 @@ function deleteUser(event) {
     event.preventDefault();
 
     // Pop up a confirmation dialog
-    var confirmation = confirm('Are you sure you want to delete this user?');
+    let confirmation = confirm('Are you sure you want to delete this user?');
 
     // Check and make sure the user confirmed
     if (confirmation === true) {
@@ -266,7 +245,7 @@ function deleteUser(event) {
         // If they did, do our delete
         $.ajax({
             type: 'DELETE',
-            url: '/users/deleteuser/' + $(this).attr('rel')
+            url: '/api/user/' + $(this).attr('rel')
         }).done(function( response ) {
 
             // Check for a successful (blank) response
@@ -282,11 +261,4 @@ function deleteUser(event) {
         });
 
     }
-    else {
-
-        // If they said no to the confirm, do nothing
-        return false;
-
-    }
-
 };

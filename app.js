@@ -1,37 +1,30 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const env = require('dotenv').config();
 
 // Database
-var mongo = require('mongodb');
-var monk = require('monk');
-var db = monk('localhost:27017/node_rest');
+const mongo = require('mongodb');
+const monk = require('monk');
+const db = monk(process.env.MONGOCONNECTURI);
 
-// workaround to change PORT 
-process.env.PORT=3001;
+const routes = require('./routes/index');
+const users = require('./routes/users');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
-var app = express();
+const cors = require('cors');
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
 
 // customized for html as view engine 
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
-// uncomment after placing your favicon in /public
-// app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Make our db accessible to our router
@@ -41,11 +34,16 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', routes);
-app.use('/users', users);
+
+/*app.use(cors({
+  origin: process.env.CLIENT_HOST | 'http://localhost:3000'
+}));*/
+app.use(cors());
+app.use('/api', users);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
@@ -54,7 +52,8 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+let environment = process.env.ENVIRONMENT || 'production';
+if (environment === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
